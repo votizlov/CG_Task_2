@@ -14,8 +14,6 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.*;
-import java.util.HashMap;
-import java.util.Hashtable;
 
 class TestFillRasterRate
 {
@@ -26,13 +24,15 @@ class TestFillRasterRate
 
         int w, h;
         int[] raster;
+        int[] testRaster;
         ColorModel cm;
         DataBuffer buffer;
         SampleModel sm;
         WritableRaster wrRaster;
         BufferedImage backBuffer;
+        BufferedImage bufferedImage;
 
-        //@Override public void paint(Graphics g)
+
         public void draw(Graphics g)
         {
             // reinitialize all if resized
@@ -48,23 +48,19 @@ class TestFillRasterRate
                 sm = cm.createCompatibleSampleModel(w,h);
                 wrRaster = Raster.createWritableRaster(sm, buffer, null);
                 backBuffer = new BufferedImage(cm, wrRaster, false, null);
+                bufferedImage = new BufferedImage(800,600,BufferedImage.TYPE_INT_RGB);
+                testRaster = ((DataBufferInt)bufferedImage.getRaster().getDataBuffer()).getData();
             }
 
             // produce raster
             for(int ptr=0, x=0; x<w; x++)
                 for(int y=0; y<h; y++)
-                    raster[ptr++] = col++;
+                    testRaster[ptr++] = 100000;
 
             // draw raster
-            g.drawImage(backBuffer,  0,0, null);
+            g.drawImage(bufferedImage,  0,0, null);
             ++framesDrawed;
 
-            /**
-             SwingUtilities.invokeLater(new Runnable()
-             {   @Override   public void run()
-             {     repaint();
-             }
-             });/**/
         }
     }
 
