@@ -48,10 +48,11 @@ class TestFillRasterRate {
 
             // produce raster
             //for (int ptr = 0, x = 0; x < w; x++)
-              //  for (int y = 0; y < h; y++)
-                //    raster[ptr++] = 67854;
-            drawBrezLine(0, 0, 200, 100);
-            drawBrezCircle(200,200,200);
+            //  for (int y = 0; y < h; y++)
+            //    raster[ptr++] = 67854;
+            drawBrezLine(100, 200, 400, 500);
+            drawBrezLine(100, 200, 600, 300);
+            drawBrezCircle(200, 400, 300);
             // draw raster
             g.drawImage(bufferedImage, 0, 0, null);
             ++framesDrawed;
@@ -72,10 +73,9 @@ class TestFillRasterRate {
                 diry = -1;
             }
             for (int i = x0; i < x1; i++) {
-                for (int j = 0;j<OUTLINE;j++){
-                    raster[(w+j) * y+x0] = 1000000;
-                }
-                raster[w * y+x0] = 0;
+                raster[w * y + i] = 100000;
+
+                raster[w * y + x0] = 0;
                 error = error + deltaerr;
                 if (2 * error >= deltax) {
                     y = y + diry;
@@ -99,9 +99,8 @@ class TestFillRasterRate {
                 //       drawpixel(X1 + x, Y1 + y);
                 //       drawpixel(X1 + x, Y1 - y);
                 //       drawpixel(X1 - x, Y1 + y);
-                for (int j = 0;j<OUTLINE;j++){
-                    raster[(w+j) * y+x0] = 100000;
-                }
+                raster[w * (y+y0) + x+x0] = 100000;
+
                 error = 2 * (delta + y) - 1;
                 if ((delta < 0) && (error <= 0)) {
                     delta += 2 * ++x + 1;
@@ -123,6 +122,7 @@ class TestFillRasterRate {
         frame.setSize(800, 600);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setVisible(true);
+        //frame.setResizable(false);
 
         // draw FPS in title
         new Timer(1000, new ActionListener() {
