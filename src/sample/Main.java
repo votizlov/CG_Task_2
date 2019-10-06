@@ -3,6 +3,7 @@ package sample;
 
 import sample.ellipseDrawers.*;
 import sample.lineDrawers.BrezLineDrawer;
+import sample.lineDrawers.DDALineDrawer;
 import sample.lineDrawers.LineDrawer;
 import sample.lineDrawers.WuLineDrawer;
 import sample.pixelDrawers.ImageBufferPixelDrawer;
@@ -16,11 +17,11 @@ import java.awt.image.*;
 
 class TestFillRasterRate {//todo make to different class
 
-    static class MyFrame extends JFrame implements MouseMotionListener, KeyListener {
+    static class MyPanel extends JPanel implements MouseMotionListener, KeyListener {
         //Graphics2D PixelDrawer LineDrawer EllipsDrawer BufferedImage = new BufferedImage(getw,geth,typergb)
         //b
         long framesDrawed;
-        private int cx,cy = 0;//mouse coordinates
+        private int cx, cy = 0;//mouse coordinates
 
         int w, h;
         private BufferedImage bufferedImage;
@@ -28,18 +29,20 @@ class TestFillRasterRate {//todo make to different class
         private EllipsDrawer ed;
         private EllipsDrawer fed;
         private PixelDrawer pixelDrawer;
+        private boolean isMouseLineActive = true;
 
-        public MyFrame() throws HeadlessException {
+        public MyPanel() throws HeadlessException {
             super();
             this.addMouseMotionListener(this);
             this.addKeyListener(this);
         }
 
 
-        public void draw(Graphics g) {
+        public void draw() {
             //передаём актуальгый pixelDrawer в костыле if(lineDrawer!=null)
             // reinitialize all if resized
             if (w != getWidth() || h != getHeight()) {
+
                 w = getWidth();
                 h = getHeight();
 
@@ -54,11 +57,35 @@ class TestFillRasterRate {//todo make to different class
             // produce raster
             //fillShapes();
             // draw raster
-            ld.drawLine(1,1,cx,cy   , Color.CYAN);
-            g.drawImage(bufferedImage, 0, 0, null);
+            ld.drawLine(1, 1, 100, 100, Color.CYAN);
+            this.getGraphics().drawImage(bufferedImage, 0, 0, null);
             ++framesDrawed;
         }
 
+        @Override
+        public void paint(Graphics g){
+            //передаём актуальгый pixelDrawer в костыле if(lineDrawer!=null)
+            // reinitialize all if resized
+            if (w != getWidth() || h != getHeight()) {
+
+                w = getWidth();
+                h = getHeight();
+
+                bufferedImage = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
+                pixelDrawer = new ImageBufferPixelDrawer(bufferedImage);
+
+                ld = new BrezLineDrawer(pixelDrawer);
+                ed = new BrezEllipsDrawer(pixelDrawer);
+            }
+
+            bufferedImage.flush();
+            // produce raster
+            //fillShapes();
+            // draw raster
+            ld.drawLine(1, 1, 100, 100, Color.CYAN);
+            g.drawImage(bufferedImage, 0, 0, null);
+            ++framesDrawed;
+        }
 
 
         @Override
@@ -68,29 +95,38 @@ class TestFillRasterRate {//todo make to different class
 
         @Override
         public void mouseMoved(MouseEvent mouseEvent) {
-            cx=mouseEvent.getX();
-            cy=mouseEvent.getY();
-            this.repaint();
+            if(isMouseLineActive) {
+                cx = mouseEvent.getX();
+                cy = mouseEvent.getY();
+                ld.drawLine(400, 300, cx, cy, Color.CYAN);
+                //getGraphics().drawImage(bufferedImage,0,0,null);
+                repaint();
+                //this.getGraphics().drawImage(bufferedImage, 0, 0, null);
+            }
         }
+
         @Override
         public void keyTyped(KeyEvent keyEvent) {
-            if(keyEvent.getKeyChar()=='d'){
-                //ld = new DDALineDrawer();
-            } else if(keyEvent.getKeyChar()=='b'){
-                ld = new BrezLineDrawer(pixelDrawer);//фабрика типа
-                ed = new BrezEllipsDrawer(pixelDrawer);
-                fed = new BrezFilledEllipsDrawer();
-            } else if(keyEvent.getKeyChar()=='w'){
-                ld = new WuLineDrawer(pixelDrawer);
-                ed = new WuEllipsDrawer(pixelDrawer);
-                fed = new WuFilledEllipsDrawer();
-            }
-            this.repaint();
+
         }
 
         @Override
         public void keyPressed(KeyEvent keyEvent) {
-
+            System.out.print("b");
+            if (keyEvent.getKeyChar() == 'd') {
+                ld = new DDALineDrawer(pixelDrawer);
+            } else if (keyEvent.getKeyChar() == 'b') {
+                ld = new BrezLineDrawer(pixelDrawer);//фабрика типа
+                ed = new BrezEllipsDrawer(pixelDrawer);
+                fed = new BrezFilledEllipsDrawer();
+            } else if (keyEvent.getKeyChar() == 'w') {
+                ld = new WuLineDrawer(pixelDrawer);
+                ed = new WuEllipsDrawer(pixelDrawer);
+                fed = new WuFilledEllipsDrawer();
+            } else if (keyEvent.getKeyChar() =='m'){
+                isMouseLineActive = !isMouseLineActive;
+            }
+            this.repaint();
         }
 
         @Override
@@ -101,30 +137,28 @@ class TestFillRasterRate {//todo make to different class
 
 
     public static void main(String[] args) {
-        final MyFrame frame = new MyFrame();
+        final MyPanel myPanel = new MyPanel();
+        final JFrame frame = new JFrame();
 
+        myPanel.setSize(800, 600);
         frame.setSize(800, 600);
-        //frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setContentPane(myPanel);
         frame.setVisible(true);
-        //frame.setResizable(false);
+        myPanel.setVisible(true);
 
         // draw FPS in title
         new Timer(1000, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                frame.setTitle(Long.toString(frame.framesDrawed));
-                frame.framesDrawed = 0;
+                frame.setTitle(Long.toString(myPanel.framesDrawed));
+                myPanel.framesDrawed = 0;
             }
         }).start();
 
-        /**/
-        frame.createBufferStrategy(1);
-        BufferStrategy bs = frame.getBufferStrategy();
-        Graphics g = bs.getDrawGraphics();
-        Graphics2D graphics2D = (Graphics2D) bs.getDrawGraphics();
-        RenderingHints rh = new RenderingHints(RenderingHints.KEY_ANTIALIASING,RenderingHints.VALUE_ANTIALIAS_ON);
-        for (; ; )
-            frame.draw(g);
-        /**/
+
+        //frame.createBufferStrategy(2);
+        myPanel.grabFocus();
+        myPanel.paint(myPanel.getGraphics());
     }
 }

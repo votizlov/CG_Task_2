@@ -20,14 +20,23 @@ public class BrezLineDrawer implements LineDrawer {//todo make paintable in all 
         int deltaerr = deltay;
         int y = y0;
         int diry = y1 - y0;
+        int dirx = x1 - x0;
         if (diry > 0) {
             diry = 1;
         }
         if (diry < 0) {
             diry = -1;
         }
-        for (int i = x0; i < x1; i++) {
-            pd.drawPixel(i,y,color);
+        if(dirx>0){
+            dirx=1;
+        }
+        if(dirx<0){
+            dirx = -1;
+        }
+        int actualX =x0;
+        for (int i = x0; i < abs(x1); i++) {
+            actualX+=dirx;
+            pd.drawPixel(actualX,y,color);
             //raster[w * y + i] = SHAPES_COLOR;
             error = error + deltaerr;
             if (2 * error >= deltax) {
@@ -39,6 +48,10 @@ public class BrezLineDrawer implements LineDrawer {//todo make paintable in all 
 
     @Override
     public void drawLine(int x1, int y1, int x2, int y2, Color color) {
+        drawBrezLine(x1, y1, x2, y2, color);
+    }
+
+    private void wikiBrezLine(int x1,int y1,int x2,int y2,Color color){
         int x = x1;
         int y = y1;
         int dX = x2-x1;
@@ -55,7 +68,6 @@ public class BrezLineDrawer implements LineDrawer {//todo make paintable in all 
             x++;
         }
     }
-
     @Override
     public void setPixelDrawer(PixelDrawer pixelDrawer) {
 
