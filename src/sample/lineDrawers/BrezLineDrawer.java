@@ -8,6 +8,10 @@ import static java.lang.Math.abs;
 
 public class BrezLineDrawer implements LineDrawer {//todo make paintable in all directions
     private PixelDrawer pd;
+
+    public BrezLineDrawer(PixelDrawer pixelDrawer){
+        this.pd = pixelDrawer;
+    }
     public void drawBrezLine(int x0,int y0,int x1,int y1, Color color){
 
         int deltax = abs(x1 - x0);

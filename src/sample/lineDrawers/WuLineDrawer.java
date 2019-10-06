@@ -6,10 +6,10 @@ import java.awt.*;
 
 public class WuLineDrawer implements LineDrawer {
     private PixelDrawer pixelDrawer;
-    WuLineDrawer(PixelDrawer pixelDrawer){this.pixelDrawer = pixelDrawer;}
+    public WuLineDrawer(PixelDrawer pixelDrawer){this.pixelDrawer = pixelDrawer;}
     @Override
     public void drawLine(int x1, int y1, int x2, int y2, Color color) {
-        void plot(Graphics2D g, double x, double y, double c) {
+        /*void plot(Graphics2D g, double x, double y, double c) {
             g.setColor(new Color(0f, 0f, 0f, (float)c));
             g.fillOval((int) x, (int) y, 2, 2);
         }
@@ -84,10 +84,12 @@ public class WuLineDrawer implements LineDrawer {
                 intery = intery + gradient;
             }
         }
+    }*/
     }
-
     @Override
     public void setPixelDrawer(PixelDrawer pixelDrawer) {
 
+
     }
-}
+
+    }

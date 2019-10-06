@@ -20,7 +20,7 @@ public class BrezEllipsDrawer implements EllipsDrawer {
         int delta = 4 * b_sqr * ((_x + 1) * (_x + 1)) + a_sqr * ((2 * _y - 1) * (2 * _y - 1)) - 4 * a_sqr * b_sqr; // Функция координат точки (x+1, y-1/2)
         while (a_sqr * (2 * _y - 1) > 2 * b_sqr * (_x + 1)) // Первая часть дуги
         {
-            pixel4(x, y, _x, _y, color_a);
+            //pixel4(x, y, _x, _y, color_a);
             if (delta < 0) // Переход по горизонтали
             {
                 _x++;
@@ -35,7 +35,7 @@ public class BrezEllipsDrawer implements EllipsDrawer {
         delta = b_sqr * ((2 * _x + 1) * (2 * _x + 1)) + 4 * a_sqr * ((_y + 1) * (_y + 1)) - 4 * a_sqr * b_sqr; // Функция координат точки (x+1/2, y-1)
         while (_y + 1 != 0) // Вторая часть дуги, если не выполняется условие первого цикла, значит выполняется a^2(2y - 1) <= 2b^2(x + 1)
         {
-            pixel4(x, y, _x, _y, color_b);
+            //pixel4(x, y, _x, _y, color_b);
             if (delta < 0) // Переход по вертикали
             {
                 _y--;

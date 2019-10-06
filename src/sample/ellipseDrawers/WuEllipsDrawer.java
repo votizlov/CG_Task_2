@@ -7,13 +7,14 @@ import java.awt.*;
 public class WuEllipsDrawer implements EllipsDrawer {
     private PixelDrawer pixelDrawer;
 
-    WuEllipsDrawer(PixelDrawer pixelDrawer) {
+    public WuEllipsDrawer(PixelDrawer pixelDrawer) {
         this.pixelDrawer = pixelDrawer;
     }
 
     @Override
-    public void drawEllips(int x, int y, int a, int b, Color color) {
+    public void drawEllips(int x0, int y0, int a, int b, Color color) {
         int x = 0;
+        int r = 0;
         int y = r;
         int delta = 1 - 2 * r;
         int error = 0;
@@ -38,6 +39,11 @@ public class WuEllipsDrawer implements EllipsDrawer {
 
     @Override
     public void drawPie(int x, int y, int r, int angle) {
+
+    }
+
+    @Override
+    public void setPixelDrawer(PixelDrawer pixelDrawer) {
 
     }
 }

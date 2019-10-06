@@ -46,18 +46,17 @@ class TestFillRasterRate {//todo make to different class
                 bufferedImage = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
                 pixelDrawer = new ImageBufferPixelDrawer(bufferedImage);
 
-                ld = new BrezLineDrawer();
+                ld = new BrezLineDrawer(pixelDrawer);
                 ed = new BrezEllipsDrawer(pixelDrawer);
             }
 
+            //g.clearRect(0,0,getWidth(),getHeight());
             // produce raster
             //fillShapes();
             // draw raster
-            //ld.drawLine(1,1,100,100, Color.CYAN);
+            ld.drawLine(1,1,cx,cy   , Color.CYAN);
             g.drawImage(bufferedImage, 0, 0, null);
-            //this.update(g);
             ++framesDrawed;
-
         }
 
 
@@ -78,12 +77,12 @@ class TestFillRasterRate {//todo make to different class
             if(keyEvent.getKeyChar()=='d'){
                 //ld = new DDALineDrawer();
             } else if(keyEvent.getKeyChar()=='b'){
-                ld = new BrezLineDrawer();//фабрика типа
-                ed = new BrezEllipsDrawer();
+                ld = new BrezLineDrawer(pixelDrawer);//фабрика типа
+                ed = new BrezEllipsDrawer(pixelDrawer);
                 fed = new BrezFilledEllipsDrawer();
             } else if(keyEvent.getKeyChar()=='w'){
-                ld = new WuLineDrawer();
-                ed = new WuEllipsDrawer();
+                ld = new WuLineDrawer(pixelDrawer);
+                ed = new WuEllipsDrawer(pixelDrawer);
                 fed = new WuFilledEllipsDrawer();
             }
             this.repaint();
@@ -122,7 +121,9 @@ class TestFillRasterRate {//todo make to different class
         frame.createBufferStrategy(1);
         BufferStrategy bs = frame.getBufferStrategy();
         Graphics g = bs.getDrawGraphics();
-        //for (; ; )
+        Graphics2D graphics2D = (Graphics2D) bs.getDrawGraphics();
+        RenderingHints rh = new RenderingHints(RenderingHints.KEY_ANTIALIASING,RenderingHints.VALUE_ANTIALIAS_ON);
+        for (; ; )
             frame.draw(g);
         /**/
     }
