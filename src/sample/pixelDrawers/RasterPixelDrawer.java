@@ -18,4 +18,9 @@ public class RasterPixelDrawer implements PixelDrawer {
     public void drawPixel(int x, int y, Color c) {
         pixels[w*y+x]=c.getRGB();
     }
+
+   // @Override
+    public PixelDrawer getInstance(BufferedImage bi) {
+        return null;
+    }
 }

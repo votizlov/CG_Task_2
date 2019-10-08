@@ -26,10 +26,12 @@ class TestFillRasterRate {//todo make to different class
         int w, h;
         private BufferedImage bufferedImage;
         private LineDrawer ld;
+        private LineDrawer currentLineDrawer;
         private EllipsDrawer ed;
         private EllipsDrawer fed;
         private PixelDrawer pixelDrawer;
         private boolean isMouseLineActive = true;
+        private DrawMode drawMode = DrawMode.BREZ;
 
         public MyPanel() throws HeadlessException {
             super();
@@ -37,52 +39,27 @@ class TestFillRasterRate {//todo make to different class
             this.addKeyListener(this);
         }
 
-
-        public void draw() {
-            //передаём актуальгый pixelDrawer в костыле if(lineDrawer!=null)
-            // reinitialize all if resized
-            if (w != getWidth() || h != getHeight()) {
-
-                w = getWidth();
-                h = getHeight();
-
-                bufferedImage = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
-                pixelDrawer = new ImageBufferPixelDrawer(bufferedImage);
-
-                ld = new BrezLineDrawer(pixelDrawer);
-                ed = new BrezEllipsDrawer(pixelDrawer);
-            }
-
-            //g.clearRect(0,0,getWidth(),getHeight());
-            // produce raster
-            //fillShapes();
-            // draw raster
-            ld.drawLine(1, 1, 100, 100, Color.CYAN);
-            this.getGraphics().drawImage(bufferedImage, 0, 0, null);
-            ++framesDrawed;
-        }
-
         @Override
-        public void paint(Graphics g){
+        public void paint(Graphics g) {
             //передаём актуальгый pixelDrawer в костыле if(lineDrawer!=null)
             // reinitialize all if resized
-            if (w != getWidth() || h != getHeight()) {
+            //if (w != getWidth() || h != getHeight()) {
 
-                w = getWidth();
-                h = getHeight();
+            w = getWidth();
+            h = getHeight();
 
-                bufferedImage = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
-                pixelDrawer = new ImageBufferPixelDrawer(bufferedImage);
-
-                ld = new BrezLineDrawer(pixelDrawer);
-                ed = new BrezEllipsDrawer(pixelDrawer);
+            bufferedImage = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
+            pixelDrawer = new ImageBufferPixelDrawer(bufferedImage);
+            switch (drawMode) {
+                case DDA: ld = new DDALineDrawer(pixelDrawer);
+                    break;
+                case WU: ld = new WuLineDrawer(pixelDrawer);
+                    break;
+                case BREZ: ld = new BrezLineDrawer(pixelDrawer);
+                    break;
             }
-
-            bufferedImage.flush();
-            // produce raster
-            //fillShapes();
-            // draw raster
             ld.drawLine(1, 1, 100, 100, Color.CYAN);
+            ld.drawLine(400, 300, cx, cy, Color.CYAN);
             g.drawImage(bufferedImage, 0, 0, null);
             ++framesDrawed;
         }
@@ -95,12 +72,11 @@ class TestFillRasterRate {//todo make to different class
 
         @Override
         public void mouseMoved(MouseEvent mouseEvent) {
-            if(isMouseLineActive) {
+            if (isMouseLineActive) {
                 cx = mouseEvent.getX();
                 cy = mouseEvent.getY();
-                ld.drawLine(400, 300, cx, cy, Color.CYAN);
                 //getGraphics().drawImage(bufferedImage,0,0,null);
-                repaint();
+                this.repaint();
                 //this.getGraphics().drawImage(bufferedImage, 0, 0, null);
             }
         }
@@ -112,18 +88,13 @@ class TestFillRasterRate {//todo make to different class
 
         @Override
         public void keyPressed(KeyEvent keyEvent) {
-            System.out.print("b");
             if (keyEvent.getKeyChar() == 'd') {
-                ld = new DDALineDrawer(pixelDrawer);
+                drawMode = DrawMode.DDA;
             } else if (keyEvent.getKeyChar() == 'b') {
-                ld = new BrezLineDrawer(pixelDrawer);//фабрика типа
-                ed = new BrezEllipsDrawer(pixelDrawer);
-                fed = new BrezFilledEllipsDrawer();
+                drawMode = DrawMode.BREZ;
             } else if (keyEvent.getKeyChar() == 'w') {
-                ld = new WuLineDrawer(pixelDrawer);
-                ed = new WuEllipsDrawer(pixelDrawer);
-                fed = new WuFilledEllipsDrawer();
-            } else if (keyEvent.getKeyChar() =='m'){
+                drawMode = DrawMode.WU;
+            } else if (keyEvent.getKeyChar() == 'm') {
                 isMouseLineActive = !isMouseLineActive;
             }
             this.repaint();
