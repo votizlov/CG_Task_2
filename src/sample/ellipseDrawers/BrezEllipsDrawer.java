@@ -21,6 +21,7 @@ public class BrezEllipsDrawer implements EllipsDrawer {
         while (a_sqr * (2 * _y - 1) > 2 * b_sqr * (_x + 1)) // Первая часть дуги
         {
             //pixel4(x, y, _x, _y, color_a);
+            pixelDrawer.drawPixel(x,y,color);
             if (delta < 0) // Переход по горизонтали
             {
                 _x++;

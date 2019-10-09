@@ -1,6 +1,10 @@
 package sample;
 
 
+import sample.arcDrawers.ArcDrawer;
+import sample.arcDrawers.BrezArcDrawer;
+import sample.arcDrawers.DDAArcDrawer;
+import sample.arcDrawers.WuArcDrawer;
 import sample.ellipseDrawers.*;
 import sample.lineDrawers.BrezLineDrawer;
 import sample.lineDrawers.DDALineDrawer;
@@ -29,6 +33,7 @@ class TestFillRasterRate {//todo make to different class
         private LineDrawer currentLineDrawer;
         private EllipsDrawer ed;
         private EllipsDrawer fed;
+        private ArcDrawer arcDrawer;
         private PixelDrawer pixelDrawer;
         private boolean isMouseLineActive = true;
         private DrawMode drawMode = DrawMode.BREZ;
@@ -41,25 +46,36 @@ class TestFillRasterRate {//todo make to different class
 
         @Override
         public void paint(Graphics g) {
-            //передаём актуальгый pixelDrawer в костыле if(lineDrawer!=null)
-            // reinitialize all if resized
-            //if (w != getWidth() || h != getHeight()) {
-
             w = getWidth();
             h = getHeight();
-
             bufferedImage = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
             pixelDrawer = new ImageBufferPixelDrawer(bufferedImage);
             switch (drawMode) {
-                case DDA: ld = new DDALineDrawer(pixelDrawer);
+                case DDA:
+                    ld = new DDALineDrawer(pixelDrawer);
+                    ed = new DDAEllipsDrawer(pixelDrawer);
+                    fed = new DDAFilledEllipsDrawer(pixelDrawer);
+                    arcDrawer = new DDAArcDrawer(pixelDrawer);
                     break;
-                case WU: ld = new WuLineDrawer(pixelDrawer);
+                case WU:
+                    ld = new WuLineDrawer(pixelDrawer);
+                    ed = new WuEllipsDrawer(pixelDrawer);
+                    fed = new WuFilledEllipsDrawer(pixelDrawer);
+                    arcDrawer = new WuArcDrawer(pixelDrawer);
                     break;
-                case BREZ: ld = new BrezLineDrawer(pixelDrawer);
+                case BREZ:
+                    ld = new BrezLineDrawer(pixelDrawer);
+                    ed = new BrezEllipsDrawer(pixelDrawer);
+                    fed = new BrezFilledEllipsDrawer(pixelDrawer);
+                    arcDrawer = new BrezArcDrawer(pixelDrawer);
                     break;
             }
             ld.drawLine(1, 1, 100, 100, Color.CYAN);
-            ld.drawLine(400, 300, cx, cy, Color.CYAN);
+            arcDrawer.drawArc(100,100,1,90,50);
+            ed.drawEllips(100,100,100,100,Color.cyan);
+            fed.drawEllips(100,100,1001,100,Color.cyan);
+            if (isMouseLineActive)
+                ld.drawLine(400, 300, cx, cy, Color.CYAN);
             g.drawImage(bufferedImage, 0, 0, null);
             ++framesDrawed;
         }
@@ -75,9 +91,7 @@ class TestFillRasterRate {//todo make to different class
             if (isMouseLineActive) {
                 cx = mouseEvent.getX();
                 cy = mouseEvent.getY();
-                //getGraphics().drawImage(bufferedImage,0,0,null);
                 this.repaint();
-                //this.getGraphics().drawImage(bufferedImage, 0, 0, null);
             }
         }
 

@@ -4,8 +4,9 @@ import sample.pixelDrawers.PixelDrawer;
 
 import java.awt.*;
 
-public class WuFilledEllipsDrawer implements EllipsDrawer {
-    public WuFilledEllipsDrawer(PixelDrawer pixelDrawer) {
+
+public class DDAFilledEllipsDrawer implements EllipsDrawer {
+    public DDAFilledEllipsDrawer(PixelDrawer pixelDrawer) {
     }
 
     @Override
@@ -14,7 +15,7 @@ public class WuFilledEllipsDrawer implements EllipsDrawer {
     }
 
     @Override
-    public void drawPie(int x, int y, int r, int eatenAngle) {
+    public void drawPie(int x, int y, int r, int angle) {
 
     }
 
