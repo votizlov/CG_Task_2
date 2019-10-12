@@ -24,23 +24,24 @@ public class WuLineDrawer implements LineDrawer {
 
     }
 
-    void plot(double x, double y, double c) {
-        pixelDrawer.drawPixel((int) x, (int) y, Color.CYAN);
+    private void plot(double x, double y, double c) {
+        int color = Color.HSBtoRGB(0, 1, (float) c);
+        pixelDrawer.drawPixel((int) x, (int) y, new Color(color));
     }
 
-    int ipart(double x) {
+    private int ipart(double x) {
         return (int) x;
     }
 
-    double fpart(double x) {
+    private double fpart(double x) {
         return x - floor(x);
     }
 
-    double rfpart(double x) {
+    private double rfpart(double x) {
         return 1.0 - fpart(x);
     }
 
-    void drawLine(double x0, double y0, double x1, double y1) {
+    private void drawLine(double x0, double y0, double x1, double y1) {
 
         boolean steep = abs(y1 - y0) > abs(x1 - x0);
         if (steep)

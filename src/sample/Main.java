@@ -70,12 +70,13 @@ class TestFillRasterRate {//todo make to different class
                     arcDrawer = new BrezArcDrawer(pixelDrawer);
                     break;
             }
-            ld.drawLine(1, 1, 100, 100, Color.CYAN);
+            int color = Color.HSBtoRGB(0, 1, 1f);
+            ld.drawLine(1, 1, 100, 100, new Color(color));
             arcDrawer.drawArc(100,100,1,90,50);
-            ed.drawEllips(100,100,100,100,Color.cyan);
-            fed.drawEllips(100,100,1001,100,Color.cyan);
+            ed.drawEllips(100,100,100,100,new Color(color));
+            fed.drawEllips(100,100,100,100,new Color(color));
             if (isMouseLineActive)
-                ld.drawLine(400, 300, cx, cy, Color.CYAN);
+                ld.drawLine(400, 300, cx, cy, new Color(color));
             g.drawImage(bufferedImage, 0, 0, null);
             ++framesDrawed;
         }
