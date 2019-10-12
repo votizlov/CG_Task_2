@@ -6,10 +6,7 @@ import sample.arcDrawers.BrezArcDrawer;
 import sample.arcDrawers.DDAArcDrawer;
 import sample.arcDrawers.WuArcDrawer;
 import sample.ellipseDrawers.*;
-import sample.lineDrawers.BrezLineDrawer;
-import sample.lineDrawers.DDALineDrawer;
-import sample.lineDrawers.LineDrawer;
-import sample.lineDrawers.WuLineDrawer;
+import sample.lineDrawers.*;
 import sample.pixelDrawers.ImageBufferPixelDrawer;
 import sample.pixelDrawers.PixelDrawer;
 
@@ -58,7 +55,7 @@ class TestFillRasterRate {//todo make to different class
                     arcDrawer = new DDAArcDrawer(pixelDrawer);
                     break;
                 case WU:
-                    ld = new WuLineDrawer(pixelDrawer);
+                    ld = new WuLineDrawerV3(pixelDrawer);
                     ed = new WuEllipsDrawer(pixelDrawer);
                     fed = new WuFilledEllipsDrawer(pixelDrawer);
                     arcDrawer = new WuArcDrawer(pixelDrawer);
