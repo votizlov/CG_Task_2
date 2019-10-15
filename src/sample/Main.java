@@ -1,108 +1,147 @@
 package sample;
 
-import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Group;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.*;
-import javafx.stage.Stage;
+
+import sample.arcDrawers.ArcDrawer;
+import sample.arcDrawers.BrezArcDrawer;
+import sample.arcDrawers.DDAArcDrawer;
+import sample.arcDrawers.WuArcDrawer;
+import sample.ellipseDrawers.*;
+import sample.lineDrawers.*;
+import sample.pixelDrawers.ImageBufferPixelDrawer;
+import sample.pixelDrawers.PixelDrawer;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.*;
 import java.awt.image.*;
-import java.util.HashMap;
-import java.util.Hashtable;
-
-public class Main {
-    private final double R = 200.0;
-    private final double DELTA = 0.05;
-    private final double X = 250.0;
-    private final double Y = 100.0;
-    private final static int WIDTH = 400;
-    private final static int HEIGHT = 400;
-    public static JFrame frame;
-    BufferedImage img;
-    int[] raster;
-    ColorModel cm;
-    DataBuffer buffer;
-    SampleModel sm;
-    WritableRaster wrRaster;
-    BufferedImage backBuffer;
 
 
+class TestFillRasterRate {//todo make to different class
 
-    public void start(Graphics g) {
-        raster = new int[WIDTH*HEIGHT];
+    static class MyPanel extends JPanel implements MouseMotionListener, KeyListener {
+        //Graphics2D PixelDrawer LineDrawer EllipsDrawer BufferedImage = new BufferedImage(getw,geth,typergb)
+        //b
+        long framesDrawed;
+        private int cx, cy = 0;//mouse coordinates
 
-        cm = new DirectColorModel(24, 255, 255<<8, 255<<16);
-        buffer = new DataBufferInt(raster, raster.length);
-        sm = cm.createCompatibleSampleModel(WIDTH,HEIGHT);
-        wrRaster = Raster.createWritableRaster(sm, buffer, null);
-        backBuffer = new BufferedImage(cm, wrRaster, false, null);
-        //code differential
-        img = new BufferedImage(WIDTH, HEIGHT,BufferedImage.TYPE_INT_RGB);
-        int[] pixels = ((DataBufferInt)img.getRaster().getDataBuffer()).getData();
-        boolean running=true;
-        while(running){
-            int col = 0;
-            for(int i = 0, ptr = 0; i<WIDTH;i++){
-                for(int j=0;j<HEIGHT;j++){
-                    pixels[ptr++] = col++;
-                }
+        int w, h;
+        private BufferedImage bufferedImage;
+        private LineDrawer ld;
+        private LineDrawer currentLineDrawer;
+        private EllipsDrawer ed;
+        private EllipsDrawer fed;
+        private ArcDrawer arcDrawer;
+        private PixelDrawer pixelDrawer;
+        private boolean isMouseLineActive = true;
+        private DrawMode drawMode = DrawMode.BREZ;
+
+        public MyPanel() throws HeadlessException {
+            super();
+            this.addMouseMotionListener(this);
+            this.addKeyListener(this);
+        }
+
+        @Override
+        public void paint(Graphics g) {
+            w = getWidth();
+            h = getHeight();
+            bufferedImage = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
+            pixelDrawer = new ImageBufferPixelDrawer(bufferedImage);
+            switch (drawMode) {
+                case DDA:
+                    ld = new DDALineDrawer(pixelDrawer);
+                    ed = new DDAEllipsDrawer(pixelDrawer);
+                    fed = new DDAFilledEllipsDrawer(pixelDrawer);
+                    arcDrawer = new DDAArcDrawer(pixelDrawer);
+                    break;
+                case WU:
+                    ld = new WuLineDrawerMy(pixelDrawer);
+                    ed = new WuEllipsDrawer(pixelDrawer);
+                    fed = new WuFilledEllipsDrawer(pixelDrawer);
+                    arcDrawer = new WuArcDrawer(pixelDrawer);
+                    break;
+                case BREZ:
+                    ld = new BrezLineDrawer(pixelDrawer);
+                    ed = new BrezEllipsDrawer(pixelDrawer);
+                    fed = new BrezFilledEllipsDrawer(pixelDrawer);
+                    arcDrawer = new BrezArcDrawer(pixelDrawer);
+                    break;
             }
-            g.drawImage(img, 0, 0, null);
-            g.dispose();
+            int color = Color.HSBtoRGB(0, 1, 1f);
+            ld.drawLine(1, 1, 100, 100, new Color(color));
+            arcDrawer.drawArc(100,100,1,90,50);
+            ed.drawEllips(100,100,100,100,new Color(color));
+            fed.drawEllips(100,100,100,100,new Color(color));
+            if (isMouseLineActive)
+                ld.drawLine(400, 300, cx, cy, new Color(color));
+            g.drawImage(bufferedImage, 0, 0, null);
+            ++framesDrawed;
+        }
+
+
+        @Override
+        public void mouseDragged(MouseEvent mouseEvent) {
+
+        }
+
+        @Override
+        public void mouseMoved(MouseEvent mouseEvent) {
+            if (isMouseLineActive) {
+                cx = mouseEvent.getX();
+                cy = mouseEvent.getY();
+                this.repaint();
+            }
+        }
+
+        @Override
+        public void keyTyped(KeyEvent keyEvent) {
+
+        }
+
+        @Override
+        public void keyPressed(KeyEvent keyEvent) {
+            if (keyEvent.getKeyChar() == 'd') {
+                drawMode = DrawMode.DDA;
+            } else if (keyEvent.getKeyChar() == 'b') {
+                drawMode = DrawMode.BREZ;
+            } else if (keyEvent.getKeyChar() == 'w') {
+                drawMode = DrawMode.WU;
+            } else if (keyEvent.getKeyChar() == 'm') {
+                isMouseLineActive = !isMouseLineActive;
+            }
+            this.repaint();
+        }
+
+        @Override
+        public void keyReleased(KeyEvent keyEvent) {
+
         }
     }
 
-    public void calcPoints(){
-        for (double x = 0.0; x < R; x += DELTA) {// draw quarter of circle, then 2 lines; which depends on pie length + fill
-
-            Path path = new Path();
-            //y = Math.sqrt(Math.pow(R, 2) - Math.pow(x - X, 2)) + Y;
-
-            MoveTo moveTo = new MoveTo();
-            //moveTo.setX(prevX);
-            //moveTo.setY(prevY);
-            path.getElements().add(moveTo);
-
-            LineTo lineTo = new LineTo();
-            lineTo.setX(x);
-            //lineTo.setY(y);
-            path.getElements().add(lineTo);
-
-            //prevX = x;
-            //prevY = y;
-
-            path.setStrokeWidth(2);
-            path.setStroke(Color.BLACK);
-
-            //root.getChildren().add(path);
-        }
-    }
-
-    public Image getImage() {
-        return img;
-    }
 
     public static void main(String[] args) {
-        Main t=new Main();
+        final MyPanel myPanel = new MyPanel();
+        final JFrame frame = new JFrame();
 
-        frame = new JFrame("WINDOW");
-
-        frame.setSize(WIDTH,HEIGHT);
+        myPanel.setSize(800, 600);
+        frame.setSize(800, 600);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setContentPane(myPanel);
         frame.setVisible(true);
-        frame.createBufferStrategy(1);
-        BufferStrategy bs = frame.getBufferStrategy();
-        Graphics g = bs.getDrawGraphics();
+        myPanel.setVisible(true);
 
-        t.start(g);
-        frame.add(new JLabel(new ImageIcon(t.getImage())));
+        // draw FPS in title
+        new Timer(1000, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                frame.setTitle(Long.toString(myPanel.framesDrawed));
+                myPanel.framesDrawed = 0;
+            }
+        }).start();
 
 
-        // Better to DISPOSE than EXIT
-        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        //frame.createBufferStrategy(2);
+        myPanel.grabFocus();
+        myPanel.paint(myPanel.getGraphics());
     }
 }
