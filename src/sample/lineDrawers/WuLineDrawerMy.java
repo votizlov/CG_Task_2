@@ -43,11 +43,14 @@ public class WuLineDrawerMy implements LineDrawer {
         pixelDrawer.drawPixel(x, y, c);//ставим первую точку
         pixelDrawer.drawPixel(x, y+1, c);
 
-        double k = dy/dx;
+        double k = 0;
+
+        double dk = el/es;//dx/dy*0.01;
         for (int t = 0; t < el; t++)//идём по всем точкам
         {
             err -= es;
             if (err < 0) {
+                k=0.5;
                 err += el;
                 x += incx;//сместить вверх или вниз, если по х
                 y += incy;//сместить влево-вправо, если по y
@@ -55,7 +58,8 @@ public class WuLineDrawerMy implements LineDrawer {
                 x += pdx;
                 y += pdy;
             }
-            k=0.7;
+            if(k+dk<1)
+                k+=dk;
             Color firstPixel = new Color((int) (c.getRed()*k),(int)(c.getGreen()*k),(int)(c.getBlue()*k));
             Color secondPixel = new Color((int) (c.getRed()*(1-k)),(int) (c.getGreen()*(1-k)),(int) (c.getBlue()*(1-k)));
             pixelDrawer.drawPixel(x, y, firstPixel);
