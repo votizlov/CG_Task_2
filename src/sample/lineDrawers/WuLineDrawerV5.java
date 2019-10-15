@@ -5,7 +5,8 @@ import sample.pixelDrawers.PixelDrawer;
 import java.awt.*;
 
 import static java.lang.Math.round;
-
+class Wu{}
+/*
 public class WuLineDrawerV5 implements LineDrawer {
 
     private PixelDrawer pixelDrawer;
@@ -101,7 +102,7 @@ public class WuLineDrawerV5 implements LineDrawer {
     /**
      * fractional part of x
      * @param x
-     */
+     *
      int fpart(double x) {
 
         // fractional part must be unsigned
@@ -112,13 +113,13 @@ public class WuLineDrawerV5 implements LineDrawer {
     /**
      * 1 - the fractional part of x
      * @param x
-     */
+
      int rfpart(double x) {
         return 1 - fpart(x);
     }
 
-    @Override
     public void setPixelDrawer(PixelDrawer pixelDrawer) {
         this.pixelDrawer = pixelDrawer;
     }
 }
+*/

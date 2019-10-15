@@ -37,7 +37,6 @@ public class BrezLineDrawer implements LineDrawer {//todo make paintable in all 
         for (int i = x0; i < abs(x1); i++) {
             actualX+=dirx;
             pd.drawPixel(actualX,y,color);
-            //raster[w * y + i] = SHAPES_COLOR;
             error = error + deltaerr;
             if (2 * error >= deltax) {
                 y = y + diry;
@@ -46,9 +45,56 @@ public class BrezLineDrawer implements LineDrawer {//todo make paintable in all 
         }
     }
 
+    private int sign(int x) {
+        return Integer.compare(x, 0);
+        //возвращает 0, если аргумент (x) равен нулю; -1, если x < 0 и 1, если x > 0.
+    }
+
     @Override
-    public void drawLine(int x1, int y1, int x2, int y2, Color color) {
-        drawBrezLine(x1, y1, x2, y2, color);
+    public void drawLine(int xstart, int ystart, int xend, int yend, Color c) {
+        int x, y, dx, dy, incx, incy, pdx, pdy, es, el, err;
+
+        dx = xend - xstart;
+        dy = yend - ystart;
+
+        incx = sign(dx);
+        incy = sign(dy);
+
+        dx = Math.abs(dx);
+        dy = Math.abs(dy);
+        if (dx > dy) //определяем наклон отрезка:
+        {
+            pdx = incx;
+            pdy = 0;
+            es = dy;
+            el = dx;
+        } else//случай, когда прямая скорее "высокая", чем длинная, т.е. вытянута по оси y
+        {
+            pdx = 0;
+            pdy = incy;
+            es = dx;
+            el = dy;//тогда в цикле будем двигаться по y
+        }
+
+        x = xstart;
+        y = ystart;
+        err = el / 2;
+        pd.drawPixel(x, y, c);//ставим первую точку
+
+        for (int t = 0; t < el; t++)//идём по всем точкам
+        {
+            err -= es;
+            if (err < 0) {
+                err += el;
+                x += incx;//сместить вверх или вниз, если по х
+                y += incy;//сместить влево-вправо, если по y
+            } else {
+                x += pdx;
+                y += pdy;
+            }
+
+            pd.drawPixel(x, y, c);
+        }
     }
 
     private void wikiBrezLine(int x1,int y1,int x2,int y2,Color color){

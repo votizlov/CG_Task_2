@@ -55,7 +55,7 @@ class TestFillRasterRate {//todo make to different class
                     arcDrawer = new DDAArcDrawer(pixelDrawer);
                     break;
                 case WU:
-                    ld = new WuLineDrawerV3(pixelDrawer);
+                    ld = new WuLineDrawerMy(pixelDrawer);
                     ed = new WuEllipsDrawer(pixelDrawer);
                     fed = new WuFilledEllipsDrawer(pixelDrawer);
                     arcDrawer = new WuArcDrawer(pixelDrawer);
