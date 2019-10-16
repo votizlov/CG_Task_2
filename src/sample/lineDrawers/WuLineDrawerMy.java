@@ -46,11 +46,12 @@ public class WuLineDrawerMy implements LineDrawer {
         double k = 0;
 
         double dk = el/es;//dx/dy*0.01;
+        System.out.println(dk);
         for (int t = 0; t < el; t++)//идём по всем точкам
         {
             err -= es;
             if (err < 0) {
-                k=0.5;
+                k=dk;
                 err += el;
                 x += incx;//сместить вверх или вниз, если по х
                 y += incy;//сместить влево-вправо, если по y
@@ -62,11 +63,11 @@ public class WuLineDrawerMy implements LineDrawer {
                 k+=dk;
             Color firstPixel = new Color((int) (c.getRed()*k),(int)(c.getGreen()*k),(int)(c.getBlue()*k));
             Color secondPixel = new Color((int) (c.getRed()*(1-k)),(int) (c.getGreen()*(1-k)),(int) (c.getBlue()*(1-k)));
-            pixelDrawer.drawPixel(x, y, firstPixel);
+            pixelDrawer.drawPixel(x, y, secondPixel);
             if(err>el/2)
-                pixelDrawer.drawPixel(x,y+1,secondPixel);
+                pixelDrawer.drawPixel(x,y+1,firstPixel);
             else
-                pixelDrawer.drawPixel(x,y-1,secondPixel);
+                pixelDrawer.drawPixel(x,y-1,firstPixel);
         }
     }
     private int sign(int x) {
