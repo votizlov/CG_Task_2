@@ -71,7 +71,7 @@ class TestFillRasterRate {//todo make to different class
             ld.drawLine(1, 1, 100, 100, new Color(color));
             arcDrawer.drawArc(100,100,1,90,50);
             ed.drawEllips(100,100,100,100,new Color(color));
-            fed.drawEllips(100,100,100,100,new Color(color));
+            fed.drawEllips(100,100,70,60,new Color(color));
             if (isMouseLineActive)
                 ld.drawLine(400, 300, cx, cy, new Color(color));
             g.drawImage(bufferedImage, 0, 0, null);
@@ -138,7 +138,6 @@ class TestFillRasterRate {//todo make to different class
                 myPanel.framesDrawed = 0;
             }
         }).start();
-
 
         //frame.createBufferStrategy(2);
         myPanel.grabFocus();

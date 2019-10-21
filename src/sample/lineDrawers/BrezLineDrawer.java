@@ -35,13 +35,13 @@ public class BrezLineDrawer implements LineDrawer {//todo make paintable in all 
         }
         int actualX =x0;
         for (int i = x0; i < abs(x1); i++) {
-            actualX+=dirx;
-            pd.drawPixel(actualX,y,color);
-            error = error + deltaerr;
-            if (2 * error >= deltax) {
-                y = y + diry;
-                error = error - deltax;
-            }
+                actualX+=dirx;
+                pd.drawPixel(actualX,y,color);
+                error = error + deltaerr;
+                if (2 * error >= deltax) {
+                    y = y + diry;
+                    error = error - deltax;
+                }
         }
     }
 
